@@ -1,469 +1,782 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./support.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="./support.js"></script>
 </head>
+
 <body>
-<x-dc>
-<helmet>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Outfit:wght@400;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
-<style>
-  body { margin: 0; background: #0c0d10; }
-  a { color: #b8e05a; text-decoration: none; }
-  a:hover { color: #d2f078; }
-  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
-  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-  @keyframes pulse { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
-  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
-  @keyframes staggerRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-  ::placeholder { color: #5a5d66; }
-  .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 8px; vertical-align: middle; animation: pulse 2s ease infinite; }
-  .cinematic-glow { box-shadow: 0 0 15px rgba(255, 178, 36, 0.15); }
-  @keyframes premiumGlow { 0%, 100% { filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.5)); } 50% { filter: drop-shadow(0 0 60px rgba(0, 240, 255, 0.8)); } }
-  .premium-hero-bg { background: radial-gradient(circle at 50% -20%, rgba(0, 240, 255, 0.25) 0%, transparent 70%); animation: pulse 6s ease-in-out infinite; }
-  .premium-text-fx { background: linear-gradient(100deg, #fff 0%, #7dbbff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .premium-card-hover:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 10px 40px rgba(0, 240, 255, 0.15); border-color: rgba(0, 240, 255, 0.4); }
-</style>
-</helmet>
-<div data-screen-label="FolioForge" style="min-height: 100vh; background: #0c0d10; color: #e8e6e1; font-family: 'Space Grotesk', sans-serif; display: flex; flex-direction: column;">
+  <x-dc>
+    <helmet>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Outfit:wght@400;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap"
+        rel="stylesheet">
+      <style>
+        body {
+          margin: 0;
+          background: #0c0d10;
+        }
 
-  <!-- Top bar -->
-  <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 28px; border-bottom: 1px solid #1d1f25;">
-    <div onClick="{{ goLanding }}" style="display: flex; align-items: baseline; gap: 8px; cursor: pointer;">
-      <span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 17px; color: #f2f0ea;">folio<span style="color: #b8e05a;">/forge</span></span>
-      <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #5a5d66;">prototype</span>
-    </div>
-    <sc-if value="{{ showStepper }}" hint-placeholder-val="{{ false }}">
-      <div style="display: flex; align-items: center; gap: 6px;">
-        <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
-          <div onClick="{{ s.go }}" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; cursor: {{ s.cursor }}; background: {{ s.bg }}; border: 1px solid {{ s.bd }};">
-            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: {{ s.numColor }};">{{ s.num }}</span>
-            <span style="font-size: 12.5px; color: {{ s.color }};">{{ s.label }}</span>
-          </div>
-        </sc-for>
-      </div>
-    </sc-if>
-    <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5a5d66;">v0.1 · demo data</div>
-  </div>
+        a {
+          color: #b8e05a;
+          text-decoration: none;
+        }
 
-  <!-- ============ LANDING ============ -->
-  <sc-if value="{{ isLanding }}" hint-placeholder-val="{{ true }}">
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 24px; text-align: center;">
-      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #b8e05a; letter-spacing: .12em; margin-bottom: 20px;">RESUME → PORTFOLIO, IN MINUTES</div>
-      <h1 style="font-size: clamp(40px, 6vw, 72px); font-weight: 700; line-height: 1.04; margin: 0 0 20px; letter-spacing: -0.02em; max-width: 780px; text-wrap: pretty;">Your resume goes in.<br>A portfolio comes out.</h1>
-      <p style="font-size: 18px; line-height: 1.6; color: #a3a49e; max-width: 560px; margin: 0 0 36px; text-wrap: pretty;">Upload a resume — even a messy one — and we turn it into a unique, animated, fully responsive portfolio site. Built for developers and students who'd rather ship code than fight CSS.</p>
-      <button onClick="{{ startIntake }}" style="background: #b8e05a; color: #10130a; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; padding: 15px 34px; border-radius: 10px; cursor: pointer;" style-hover="background: #d2f078;">Build my portfolio →</button>
-      <div style="display: flex; gap: 10px; margin-top: 52px; flex-wrap: wrap; justify-content: center;">
-        <sc-for list="{{ landingStyles }}" as="t" hint-placeholder-count="5">
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #8b8d94; border: 1px solid #24262d; border-radius: 999px; padding: 7px 14px;">{{ t.name }}</div>
-        </sc-for>
-      </div>
-      <div style="font-size: 12.5px; color: #5a5d66; margin-top: 14px;">five template families at launch — every site still one of a kind</div>
-    </div>
-  </sc-if>
+        a:hover {
+          color: #d2f078;
+        }
 
-  <!-- ============ INTAKE ============ -->
-  <sc-if value="{{ isIntake }}" hint-placeholder-val="{{ false }}">
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; padding: 48px 24px;">
-      <div style="width: 100%; max-width: 640px; animation: rise .4s ease both;">
-        <h2 style="font-size: 30px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.01em;">Tell us about yourself</h2>
-        <p style="color: #a3a49e; margin: 0 0 28px; font-size: 15px;">Any format works — we'll structure it for you.</p>
-        <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
-          <sc-for list="{{ intakeTabs }}" as="tab" hint-placeholder-count="4">
-            <button onClick="{{ tab.pick }}" style="font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; font-weight: 500; padding: 9px 16px; border-radius: 8px; cursor: pointer; background: {{ tab.bg }}; color: {{ tab.color }}; border: 1px solid {{ tab.bd }};">{{ tab.label }}</button>
-          </sc-for>
+        @keyframes blink {
+
+          0%,
+          100% {
+            opacity: 1;
+          }
+
+          50% {
+            opacity: 0;
+          }
+        }
+
+        @keyframes rise {
+          from {
+            opacity: 0;
+            transform: translateY(14px);
+          }
+
+          to {
+            opacity: 1;
+            transform: none;
+          }
+        }
+
+        @keyframes pulse {
+
+          0%,
+          100% {
+            opacity: .5;
+          }
+
+          50% {
+            opacity: 1;
+          }
+        }
+
+        @keyframes float {
+
+          0%,
+          100% {
+            transform: translateY(0);
+          }
+
+          50% {
+            transform: translateY(-3px);
+          }
+        }
+
+        @keyframes staggerRise {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+
+          to {
+            opacity: 1;
+            transform: none;
+          }
+        }
+
+        ::placeholder {
+          color: #5a5d66;
+        }
+
+        .status-dot {
+          display: inline-block;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          margin-right: 8px;
+          vertical-align: middle;
+          animation: pulse 2s ease infinite;
+        }
+
+        .cinematic-glow {
+          box-shadow: 0 0 15px rgba(255, 178, 36, 0.15);
+        }
+
+        @keyframes premiumGlow {
+
+          0%,
+          100% {
+            filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.5));
+          }
+
+          50% {
+            filter: drop-shadow(0 0 60px rgba(0, 240, 255, 0.8));
+          }
+        }
+
+        .premium-hero-bg {
+          background: radial-gradient(circle at 50% -20%, rgba(0, 240, 255, 0.25) 0%, transparent 70%);
+          animation: pulse 6s ease-in-out infinite;
+        }
+
+        .premium-text-fx {
+          background: linear-gradient(100deg, #fff 0%, #7dbbff 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .premium-card-hover:hover {
+          transform: translateY(-4px) scale(1.02);
+          box-shadow: 0 10px 40px rgba(0, 240, 255, 0.15);
+          border-color: rgba(0, 240, 255, 0.4);
+        }
+      </style>
+    </helmet>
+    <div data-screen-label="FolioForge"
+      style="min-height: 100vh; background: #0c0d10; color: #e8e6e1; font-family: 'Space Grotesk', sans-serif; display: flex; flex-direction: column;">
+
+      <!-- Top bar -->
+      <div
+        style="display: flex; align-items: center; justify-content: space-between; padding: 16px 28px; border-bottom: 1px solid #1d1f25;">
+        <div onClick="{{ goLanding }}" style="display: flex; align-items: baseline; gap: 8px; cursor: pointer;">
+          <span
+            style="font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 17px; color: #f2f0ea;">folio<span
+              style="color: #b8e05a;">/forge</span></span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #5a5d66;">prototype</span>
         </div>
-
-        <sc-if value="{{ tabUpload }}" hint-placeholder-val="{{ true }}">
-          <label style="display: block; border: 1.5px dashed {{ dropBorder }}; border-radius: 14px; padding: 48px 24px; text-align: center; cursor: pointer; background: #101218;" style-hover="border-color: #b8e05a;">
-            <input type="file" accept=".pdf,.doc,.docx" onChange="{{ attachFile }}" style="display: none;" />
-            <sc-if value="{{ uploaded }}" hint-placeholder-val="{{ false }}">
-              <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #b8e05a;">✓ {{ fileName }}</div>
-              <div style="font-size: 12.5px; color: #8b8d94; margin-top: 8px;">ready to parse</div>
-            </sc-if>
-            <sc-if value="{{ notUploaded }}" hint-placeholder-val="{{ true }}">
-              <div style="font-size: 15px; color: #c9c8c2; font-weight: 500;">Drop your resume here or click to browse</div>
-              <div style="font-size: 12.5px; color: #8b8d94; margin-top: 8px;">PDF or DOCX</div>
-            </sc-if>
-          </label>
-        </sc-if>
-
-        <sc-if value="{{ tabPaste }}" hint-placeholder-val="{{ false }}">
-          <textarea value="{{ pasteText }}" onChange="{{ onPaste }}" placeholder="Paste anything — resume text, a bio, bullet points, a LinkedIn about section…" style="width: 100%; box-sizing: border-box; height: 190px; background: #101218; border: 1px solid #24262d; border-radius: 14px; color: #e8e6e1; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; padding: 18px; resize: vertical; outline: none;"></textarea>
-          <button onClick="{{ fillSample }}" style="margin-top: 10px; background: none; border: 1px solid #24262d; color: #8b8d94; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; padding: 7px 12px; border-radius: 8px; cursor: pointer;" style-hover="color: #b8e05a; border-color: #3a3d33;">paste sample text</button>
-        </sc-if>
-
-        <sc-if value="{{ tabLinkedin }}" hint-placeholder-val="{{ false }}">
-          <div style="background: #101218; border: 1px solid #24262d; border-radius: 14px; padding: 24px;">
-            <label style="font-size: 12.5px; color: #8b8d94; display: block; margin-bottom: 8px;">Public profile URL</label>
-            <input value="{{ linkedinUrl }}" onChange="{{ onLinkedin }}" placeholder="linkedin.com/in/your-name" style="width: 100%; box-sizing: border-box; background: #0c0d10; border: 1px solid #24262d; border-radius: 10px; color: #e8e6e1; font-family: 'JetBrains Mono', monospace; font-size: 14px; padding: 13px 16px; outline: none;">
-            <div style="font-size: 12px; color: #5a5d66; margin-top: 10px;">We'll pull your headline, roles, and skills — you approve everything before it goes live.</div>
-          </div>
-        </sc-if>
-
-        <sc-if value="{{ tabChat }}" hint-placeholder-val="{{ false }}">
-          <div style="background: #101218; border: 1px solid #24262d; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
-            <sc-for list="{{ chatMsgs }}" as="m" hint-placeholder-count="2">
-              <div style="display: flex; justify-content: {{ m.justify }};">
-                <div style="max-width: 78%; padding: 11px 15px; border-radius: 12px; font-size: 14px; line-height: 1.5; background: {{ m.bg }}; color: {{ m.color }};">{{ m.text }}</div>
+        <sc-if value="{{ showStepper }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+              <div onClick="{{ s.go }}"
+                style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; cursor: {{ s.cursor }}; background: {{ s.bg }}; border: 1px solid {{ s.bd }};">
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: {{ s.numColor }};">{{
+                  s.num }}</span>
+                <span style="font-size: 12.5px; color: {{ s.color }};">{{ s.label }}</span>
               </div>
             </sc-for>
-            <div style="display: flex; gap: 8px; margin-top: 4px;">
-              <input value="{{ chatDraft }}" onChange="{{ onChatDraft }}" placeholder="Type your answer…" style="flex: 1; background: #0c0d10; border: 1px solid #24262d; border-radius: 10px; color: #e8e6e1; font-family: 'Space Grotesk', sans-serif; font-size: 14px; padding: 11px 14px; outline: none;">
-              <button onClick="{{ sendChat }}" style="background: #22252c; border: 1px solid #2e313a; color: #e8e6e1; border-radius: 10px; padding: 0 18px; font-size: 13.5px; cursor: pointer; font-family: 'Space Grotesk', sans-serif;" style-hover="background: #2b2f38;">Send</button>
-            </div>
           </div>
         </sc-if>
-
-        <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
-          <button onClick="{{ startParsing }}" style="background: {{ continueBg }}; color: {{ continueColor }}; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; padding: 13px 28px; border-radius: 10px; cursor: {{ continueCursor }};">Parse with AI →</button>
-        </div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5a5d66;">v0.1 · demo data</div>
       </div>
-    </div>
-  </sc-if>
 
-  <!-- ============ PARSING ============ -->
-  <sc-if value="{{ isParsing }}" hint-placeholder-val="{{ false }}">
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px;">
-      <div style="width: 100%; max-width: 560px;">
-        <div style="background: #0f1116; border: 1px solid #22252c; border-radius: 14px; overflow: hidden;">
-          <div style="display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #1d1f25;">
-            <div style="width: 10px; height: 10px; border-radius: 50%; background: #b8e05a; animation: pulse 1.2s ease infinite;"></div>
-            <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8b8d94;">folio-parser · running</span>
-            <span style="margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #b8e05a;">{{ parsePct }}%</span>
-          </div>
-          <div style="padding: 18px 20px; min-height: 220px; display: flex; flex-direction: column; gap: 9px;">
-            <sc-for list="{{ parseLines }}" as="line" hint-placeholder-count="3">
-              <div style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: {{ line.color }};"><span style="color: #4a4d55;">▸ </span>{{ line.text }}</div>
+      <!-- ============ LANDING ============ -->
+      <sc-if value="{{ isLanding }}" hint-placeholder-val="{{ true }}">
+        <div
+          style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 24px; text-align: center;">
+          <div
+            style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #b8e05a; letter-spacing: .12em; margin-bottom: 20px;">
+            RESUME → PORTFOLIO, IN MINUTES</div>
+          <h1
+            style="font-size: clamp(40px, 6vw, 72px); font-weight: 700; line-height: 1.04; margin: 0 0 20px; letter-spacing: -0.02em; max-width: 780px; text-wrap: pretty;">
+            Your resume goes in.<br>A portfolio comes out.</h1>
+          <p
+            style="font-size: 18px; line-height: 1.6; color: #a3a49e; max-width: 560px; margin: 0 0 36px; text-wrap: pretty;">
+            Upload a resume — even a messy one — and we turn it into a unique, animated, fully responsive portfolio
+            site. Built for developers and students who'd rather ship code than fight CSS.</p>
+          <button onClick="{{ startIntake }}"
+            style="background: #b8e05a; color: #10130a; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; padding: 15px 34px; border-radius: 10px; cursor: pointer;"
+            style-hover="background: #d2f078;">Build my portfolio →</button>
+          <div style="display: flex; gap: 10px; margin-top: 52px; flex-wrap: wrap; justify-content: center;">
+            <sc-for list="{{ landingStyles }}" as="t" hint-placeholder-count="5">
+              <div
+                style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #8b8d94; border: 1px solid #24262d; border-radius: 999px; padding: 7px 14px;">
+                {{ t.name }}</div>
             </sc-for>
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #b8e05a; animation: blink 1s step-end infinite;">▮</div>
           </div>
-          <div style="height: 3px; background: #1d1f25;"><div style="height: 100%; background: #b8e05a; width: {{ parseWidth }}; transition: width .5s ease;"></div></div>
+          <div style="font-size: 12.5px; color: #5a5d66; margin-top: 14px;">five template families at launch — every
+            site still one of a kind</div>
         </div>
-        <div style="text-align: center; font-size: 13px; color: #5a5d66; margin-top: 18px;">Reading structure, rewriting bullets, ranking sections for a developer profile…</div>
-      </div>
-    </div>
-  </sc-if>
+      </sc-if>
 
-  <!-- ============ REVIEW ============ -->
-  <sc-if value="{{ isReview }}" hint-placeholder-val="{{ false }}">
-    <div style="flex: 1; padding: 40px 24px; display: flex; justify-content: center;">
-      <div style="width: 100%; max-width: 860px; animation: rise .4s ease both;">
-        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;">
-          <div>
-            <h2 style="font-size: 28px; font-weight: 700; margin: 0 0 6px;">Here's what we found</h2>
-            <p style="color: #a3a49e; margin: 0; font-size: 14.5px;">Everything is editable — click any field.</p>
-          </div>
-          <button onClick="{{ goResume }}" style="background: #b8e05a; color: #10130a; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; padding: 12px 26px; border-radius: 10px; cursor: pointer;" style-hover="background: #d2f078;">Generate PDF Resume →</button>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
-
-          <div style="background: #101218; border: 1px solid #22252c; border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 14px;">
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .1em; color: #b8e05a;">IDENTITY</div>
-            <div>
-              <label style="font-size: 11.5px; color: #8b8d94; display: block; margin-bottom: 5px;">Name</label>
-              <input value="{{ pName }}" onChange="{{ onName }}" style="width: 100%; box-sizing: border-box; background: #0c0d10; border: 1px solid #24262d; border-radius: 8px; color: #e8e6e1; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 500; padding: 10px 13px; outline: none;">
-            </div>
-            <div>
-              <label style="font-size: 11.5px; color: #8b8d94; display: block; margin-bottom: 5px;">Headline</label>
-              <input value="{{ pHeadline }}" onChange="{{ onHeadline }}" style="width: 100%; box-sizing: border-box; background: #0c0d10; border: 1px solid #24262d; border-radius: 8px; color: #e8e6e1; font-family: 'Space Grotesk', sans-serif; font-size: 14px; padding: 10px 13px; outline: none;">
-            </div>
-            <button onClick="{{ punchHeadline }}" style="align-self: flex-start; background: none; border: 1px solid #3a3d33; color: #b8e05a; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 7px 12px; border-radius: 8px; cursor: pointer;" style-hover="background: #171a12;">✦ AI: make it punchier</button>
-          </div>
-
-          <div style="background: #101218; border: 1px solid #22252c; border-radius: 14px; padding: 22px;">
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .1em; color: #b8e05a; margin-bottom: 14px;">SKILLS · {{ skillCount }}</div>
-            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-              <sc-for list="{{ skills }}" as="sk" hint-placeholder-count="6">
-                <div onClick="{{ sk.remove }}" title="Click to remove" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #c9c8c2; background: #171921; border: 1px solid #24262d; border-radius: 999px; padding: 6px 12px; cursor: pointer;" style-hover="border-color: #7a3535; color: #e0a0a0;">{{ sk.name }}</div>
+      <!-- ============ INTAKE ============ -->
+      <sc-if value="{{ isIntake }}" hint-placeholder-val="{{ false }}">
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; padding: 48px 24px;">
+          <div style="width: 100%; max-width: 640px; animation: rise .4s ease both;">
+            <h2 style="font-size: 30px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.01em;">Tell us about
+              yourself</h2>
+            <p style="color: #a3a49e; margin: 0 0 28px; font-size: 15px;">Any format works — we'll structure it for you.
+            </p>
+            <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
+              <sc-for list="{{ intakeTabs }}" as="tab" hint-placeholder-count="4">
+                <button onClick="{{ tab.pick }}"
+                  style="font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; font-weight: 500; padding: 9px 16px; border-radius: 8px; cursor: pointer; background: {{ tab.bg }}; color: {{ tab.color }}; border: 1px solid {{ tab.bd }};">{{
+                  tab.label }}</button>
               </sc-for>
             </div>
-            <div style="display: flex; gap: 8px; margin-top: 14px;">
-              <input value="{{ skillDraft }}" onChange="{{ onSkillDraft }}" placeholder="Add a skill…" style="flex: 1; background: #0c0d10; border: 1px solid #24262d; border-radius: 8px; color: #e8e6e1; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; padding: 8px 12px; outline: none;">
-              <button onClick="{{ addSkill }}" style="background: #22252c; border: 1px solid #2e313a; color: #e8e6e1; border-radius: 8px; padding: 0 14px; cursor: pointer; font-size: 14px;" style-hover="background: #2b2f38;">+</button>
-            </div>
-          </div>
 
-          <div style="background: #101218; border: 1px solid #22252c; border-radius: 14px; padding: 22px;">
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .1em; color: #b8e05a; margin-bottom: 14px;">EXPERIENCE</div>
-            <div style="display: flex; flex-direction: column; gap: 14px;">
-              <sc-for list="{{ experience }}" as="ex" hint-placeholder-count="2">
-                <div style="border: 1px solid #1d1f25; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 8px;">
-                  <input value="{{ ex.role }}" onChange="{{ ex.onRole }}" style="background: none; border: none; border-bottom: 1px dashed #2a2d34; color: #e8e6e1; font-family: 'Space Grotesk', sans-serif; font-size: 14.5px; font-weight: 500; padding: 2px 0 5px; outline: none;">
-                  <div style="display: flex; gap: 10px; align-items: center;">
-                    <input value="{{ ex.company }}" onChange="{{ ex.onCompany }}" style="flex: 1; background: none; border: none; color: #a3a49e; font-size: 13px; padding: 0; outline: none;">
-                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5a5d66; white-space: nowrap;">{{ ex.dates }}</span>
+            <sc-if value="{{ tabUpload }}" hint-placeholder-val="{{ true }}">
+              <label
+                style="display: block; border: 1.5px dashed {{ dropBorder }}; border-radius: 14px; padding: 48px 24px; text-align: center; cursor: pointer; background: #101218;"
+                style-hover="border-color: #b8e05a;">
+                <input type="file" accept=".pdf,.doc,.docx" onChange="{{ attachFile }}" style="display: none;" />
+                <sc-if value="{{ uploaded }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #b8e05a;">✓ {{ fileName
+                    }}</div>
+                  <div style="font-size: 12.5px; color: #8b8d94; margin-top: 8px;">ready to parse</div>
+                </sc-if>
+                <sc-if value="{{ notUploaded }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size: 15px; color: #c9c8c2; font-weight: 500;">Drop your resume here or click to
+                    browse</div>
+                  <div style="font-size: 12.5px; color: #8b8d94; margin-top: 8px;">PDF or DOCX</div>
+                </sc-if>
+              </label>
+            </sc-if>
+
+            <sc-if value="{{ tabPaste }}" hint-placeholder-val="{{ false }}">
+              <textarea value="{{ pasteText }}" onChange="{{ onPaste }}"
+                placeholder="Paste anything — resume text, a bio, bullet points, a LinkedIn about section…"
+                style="width: 100%; box-sizing: border-box; height: 190px; background: #101218; border: 1px solid #24262d; border-radius: 14px; color: #e8e6e1; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; padding: 18px; resize: vertical; outline: none;"></textarea>
+              <button onClick="{{ fillSample }}"
+                style="margin-top: 10px; background: none; border: 1px solid #24262d; color: #8b8d94; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; padding: 7px 12px; border-radius: 8px; cursor: pointer;"
+                style-hover="color: #b8e05a; border-color: #3a3d33;">paste sample text</button>
+            </sc-if>
+
+            <sc-if value="{{ tabLinkedin }}" hint-placeholder-val="{{ false }}">
+              <div style="background: #101218; border: 1px solid #24262d; border-radius: 14px; padding: 24px;">
+                <label style="font-size: 12.5px; color: #8b8d94; display: block; margin-bottom: 8px;">Public profile
+                  URL</label>
+                <input value="{{ linkedinUrl }}" onChange="{{ onLinkedin }}" placeholder="linkedin.com/in/your-name"
+                  style="width: 100%; box-sizing: border-box; background: #0c0d10; border: 1px solid #24262d; border-radius: 10px; color: #e8e6e1; font-family: 'JetBrains Mono', monospace; font-size: 14px; padding: 13px 16px; outline: none;">
+                <div style="font-size: 12px; color: #5a5d66; margin-top: 10px;">We'll pull your headline, roles, and
+                  skills — you approve everything before it goes live.</div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tabChat }}" hint-placeholder-val="{{ false }}">
+              <div
+                style="background: #101218; border: 1px solid #24262d; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+                <sc-for list="{{ chatMsgs }}" as="m" hint-placeholder-count="2">
+                  <div style="display: flex; justify-content: {{ m.justify }};">
+                    <div
+                      style="max-width: 78%; padding: 11px 15px; border-radius: 12px; font-size: 14px; line-height: 1.5; background: {{ m.bg }}; color: {{ m.color }};">
+                      {{ m.text }}</div>
                   </div>
-                  <textarea value="{{ ex.desc }}" onChange="{{ ex.onDesc }}" style="background: none; border: none; color: #a3a49e; font-family: 'Space Grotesk', sans-serif; font-size: 13px; line-height: 1.5; padding: 0; outline: none; resize: none; height: 56px; margin-top: 4px;"></textarea>
-                </div>
-              </sc-for>
-            </div>
-          </div>
-
-          <div style="background: #101218; border: 1px solid #22252c; border-radius: 14px; padding: 22px;">
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .1em; color: #b8e05a; margin-bottom: 14px;">PROJECTS · {{ projCount }}</div>
-            <div style="display: flex; flex-direction: column; gap: 14px;">
-              <sc-for list="{{ projects }}" as="pr" hint-placeholder-count="3">
-                <div style="border: 1px solid #1d1f25; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 7px;">
-                  <input value="{{ pr.name }}" onChange="{{ pr.onName }}" style="background: none; border: none; border-bottom: 1px dashed #2a2d34; color: #e8e6e1; font-family: 'Space Grotesk', sans-serif; font-size: 14.5px; font-weight: 500; padding: 2px 0 5px; outline: none;">
-                  <textarea value="{{ pr.desc }}" onChange="{{ pr.onDesc }}" style="background: none; border: none; color: #a3a49e; font-family: 'Space Grotesk', sans-serif; font-size: 13px; line-height: 1.5; padding: 0; outline: none; resize: none; height: 56px;"></textarea>
-                  <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #5a5d66;">{{ pr.stack }}</span>
-                </div>
-              </sc-for>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </sc-if>
-
-  <!-- ============ RESUME ============ -->
-  <sc-if value="{{ isResume }}" hint-placeholder-val="{{ false }}">
-    <div style="flex: 1; padding: 40px 24px; display: flex; flex-direction: column; align-items: center;">
-      <div style="width: 100%; max-width: 960px; animation: rise .4s ease both;">
-        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;">
-          <div>
-            <h2 style="font-size: 28px; font-weight: 700; margin: 0 0 6px;">Your Resume is Ready</h2>
-            <p style="color: #a3a49e; margin: 0; font-size: 14.5px;">Select a clean, ATS-friendly format for your PDF.</p>
-          </div>
-          <button onClick="{{ goPayment }}" style="background: #b8e05a; color: #10130a; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; padding: 12px 26px; border-radius: 10px; cursor: pointer;" style-hover="background: #d2f078;">Download PDF (₹20) →</button>
-        </div>
-        <div style="display: flex; gap: 32px; flex-wrap: wrap; justify-content: center;">
-          
-          <!-- Format Selector -->
-          <div style="display: flex; flex-direction: column; gap: 12px; width: 220px;">
-            <sc-for list="{{ resumeStyles }}" as="rs" hint-placeholder-count="2">
-              <div onClick="{{ rs.pick }}" style="background: #101218; border: 1.5px solid {{ rs.bd }}; border-radius: 10px; padding: 16px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;" style-hover="border-color: #b8e05a;">
-                <span style="font-size: 14.5px; font-weight: 600; color: #e8e6e1; font-family: {{ rs.fontFamily }};">{{ rs.name }}</span>
-                <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: {{ rs.checkColor }};">{{ rs.check }}</span>
-              </div>
-            </sc-for>
-          </div>
-          
-          <!-- A4 Canvas Simulator -->
-          <div style="width: 480px; height: 680px; background: #ffffff; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); padding: 48px; color: #111; font-family: {{ resumeFont }}; overflow: hidden;">
-            <h1 style="font-size: 28px; margin: 0 0 4px; color: #111;">{{ pName }}</h1>
-            <div style="font-size: 13px; color: #555; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #333;">{{ pHeadline }}</div>
-            
-            <h2 style="font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 12px; color: #111;">Skills</h2>
-            <div style="font-size: 13px; color: #333; margin-bottom: 24px; line-height: 1.6;">{{ cvSkills }}</div>
-            
-            <h2 style="font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 12px; color: #111;">Experience</h2>
-            <sc-for list="{{ experience }}" as="ex" hint-placeholder-count="2">
-              <div style="margin-bottom: 12px;">
-                <div style="display: flex; justify-content: space-between; font-size: 13.5px; font-weight: bold;">
-                  <span>{{ ex.role }}</span><span style="font-weight: normal; color: #555;">{{ ex.dates }}</span>
-                </div>
-                <div style="font-size: 13px; color: #444; font-style: italic; margin-top: 4px;">{{ ex.company }}</div>
-                <div style="font-size: 12.5px; color: #333; margin-top: 4px; line-height: 1.5;">{{ ex.desc }}</div>
-              </div>
-            </sc-for>
-          </div>
-        </div>
-      </div>
-    </div>
-  </sc-if>
-
-  <!-- ============ MOCK PAYMENT ============ -->
-  <sc-if value="{{ isPayment }}" hint-placeholder-val="{{ false }}">
-    <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: rgba(5,6,8,0.85); position: fixed; inset: 0; z-index: 50;">
-      <div style="background: #ffffff; border-radius: 8px; width: 380px; overflow: hidden; animation: staggerRise 0.2s ease both; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-        <div style="background: #2b84eb; padding: 24px 20px; color: white; display: flex; align-items: center; justify-content: space-between;">
-           <div>
-             <div style="font-weight: bold; font-size: 16px; margin-bottom: 4px;">FolioForge Software</div>
-             <div style="font-size: 13px; opacity: 0.8;">Resume PDF Export</div>
-           </div>
-           <div style="font-size: 20px; font-weight: bold;">₹ 20</div>
-        </div>
-        <div style="padding: 24px 20px;">
-          <div style="font-size: 14px; color: #555; margin-bottom: 16px;">Pay easily using UPI or Card</div>
-          <div style="border: 1px solid #ddd; border-radius: 4px; padding: 12px; margin-bottom: 12px; cursor: pointer; border-left: 4px solid #2b84eb; display: flex; justify-content: space-between; align-items: center;" style-hover="background: #f9f9f9;">
-            <div>
-              <strong style="color: #333; font-size: 14px;">UPI / QR</strong><br>
-              <span style="color: #777; font-size: 12px;">Google Pay, PhonePe, Paytm</span>
-            </div>
-            <div style="width: 16px; height: 16px; border-radius: 50%; border: 4px solid #2b84eb;"></div>
-          </div>
-          <div style="border: 1px solid #ddd; border-radius: 4px; padding: 12px; cursor: pointer;" style-hover="background: #f9f9f9;">
-            <strong style="color: #333; font-size: 14px;">Cards</strong><br>
-            <span style="color: #777; font-size: 12px;">Visa, MasterCard, RuPay</span>
-          </div>
-          <button onClick="{{ confirmPayment }}" style="width: 100%; background: #2b84eb; color: white; border: none; font-size: 15px; font-weight: bold; padding: 14px; border-radius: 4px; margin-top: 24px; cursor: pointer;" style-hover="background: #1c72d6; transform: scale(0.98);">Pay ₹ 20</button>
-          <div style="text-align: center; margin-top: 16px;"><span onClick="{{ cancelPayment }}" style="color: #999; font-size: 12px; text-decoration: underline; cursor: pointer;">Cancel</span></div>
-        </div>
-      </div>
-    </div>
-  </sc-if>
-
-  <!-- ============ UPSELL ============ -->
-  <sc-if value="{{ isUpsell }}" hint-placeholder-val="{{ false }}">
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 24px; text-align: center; animation: rise 0.5s ease both;">
-      <div style="font-size: 54px; margin-bottom: 16px;">🎉</div>
-      <h1 style="font-size: 42px; font-weight: 700; margin: 0 0 16px; letter-spacing: -0.02em;">Payment Successful.</h1>
-      <p style="font-size: 18px; color: #a3a49e; max-width: 600px; margin: 0 0 40px;">Your PDF Resume has been generated and securely downloaded. <br><br><span style="color: #e8e6e1; font-weight: bold;">But why stop there?</span> We can turn the exact data into an animated, responsive web portfolio right now.</p>
-      <button onClick="{{ goStyle }}" style="background: #b8e05a; color: #10130a; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; padding: 16px 40px; border-radius: 12px; cursor: pointer; box-shadow: 0 0 30px rgba(184,224,90,0.3);" style-hover="background: #d2f078; box-shadow: 0 0 40px rgba(184,224,90,0.5);">Generate Web Portfolio →</button>
-      <div style="margin-top: 24px;"><span onClick="{{ goLanding }}" style="color: #5a5d66; font-size: 13.5px; text-decoration: underline; cursor: pointer;" style-hover="color: #8b8d94;">No thanks, I just wanted the PDF</span></div>
-    </div>
-  </sc-if>
-
-  <!-- ============ STYLE ============ -->
-  <sc-if value="{{ isStyle }}" hint-placeholder-val="{{ false }}">
-    <div style="flex: 1; padding: 40px 24px; display: flex; justify-content: center;">
-      <div style="width: 100%; max-width: 960px; animation: rise .4s ease both;">
-        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;">
-          <div>
-            <h2 style="font-size: 28px; font-weight: 700; margin: 0 0 6px;">Pick your personality</h2>
-            <p style="color: #a3a49e; margin: 0; font-size: 14.5px;">Same content, five very different sites. Switch anytime.</p>
-          </div>
-          <button onClick="{{ goPreview }}" style="background: #b8e05a; color: #10130a; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; padding: 12px 26px; border-radius: 10px; cursor: pointer;" style-hover="background: #d2f078;">Generate my site →</button>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
-          <sc-for list="{{ templateCards }}" as="tc" hint-placeholder-count="5">
-            <div onClick="{{ tc.pick }}" style="border: 1.5px solid {{ tc.bd }}; border-radius: 14px; overflow: hidden; cursor: pointer; background: #101218; box-shadow: {{ tc.shadow }};" style-hover="border-color: #b8e05a;">
-              <div style="height: 130px; background: {{ tc.pvBg }}; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px;">
-                <div style="width: 46%; height: 13px; background: {{ tc.pvHead }}; border-radius: {{ tc.pvRadius }};"></div>
-                <div style="width: 72%; height: 8px; background: {{ tc.pvText }}; border-radius: {{ tc.pvRadius }}; opacity: .55;"></div>
-                <div style="width: 60%; height: 8px; background: {{ tc.pvText }}; border-radius: {{ tc.pvRadius }}; opacity: .35;"></div>
-                <div style="display: flex; gap: 6px; margin-top: auto;">
-                  <div style="width: 52px; height: 18px; background: {{ tc.pvAccent }}; border-radius: {{ tc.pvRadius }};"></div>
-                  <div style="width: 34px; height: 18px; border: 1px solid {{ tc.pvText }}; opacity: .4; border-radius: {{ tc.pvRadius }};"></div>
+                </sc-for>
+                <div style="display: flex; gap: 8px; margin-top: 4px;">
+                  <input value="{{ chatDraft }}" onChange="{{ onChatDraft }}" placeholder="Type your answer…"
+                    style="flex: 1; background: #0c0d10; border: 1px solid #24262d; border-radius: 10px; color: #e8e6e1; font-family: 'Space Grotesk', sans-serif; font-size: 14px; padding: 11px 14px; outline: none;">
+                  <button onClick="{{ sendChat }}"
+                    style="background: #22252c; border: 1px solid #2e313a; color: #e8e6e1; border-radius: 10px; padding: 0 18px; font-size: 13.5px; cursor: pointer; font-family: 'Space Grotesk', sans-serif;"
+                    style-hover="background: #2b2f38;">Send</button>
                 </div>
               </div>
-              <div style="padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #1d1f25;">
+            </sc-if>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
+              <button onClick="{{ startParsing }}"
+                style="background: {{ continueBg }}; color: {{ continueColor }}; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; padding: 13px 28px; border-radius: 10px; cursor: {{ continueCursor }};">Parse
+                with AI →</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ PARSING ============ -->
+      <sc-if value="{{ isParsing }}" hint-placeholder-val="{{ false }}">
+        <div
+          style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px;">
+          <div style="width: 100%; max-width: 560px;">
+            <div style="background: #0f1116; border: 1px solid #22252c; border-radius: 14px; overflow: hidden;">
+              <div
+                style="display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #1d1f25;">
+                <div
+                  style="width: 10px; height: 10px; border-radius: 50%; background: #b8e05a; animation: pulse 1.2s ease infinite;">
+                </div>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8b8d94;">folio-parser ·
+                  running</span>
+                <span
+                  style="margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #b8e05a;">{{
+                  parsePct }}%</span>
+              </div>
+              <div style="padding: 18px 20px; min-height: 220px; display: flex; flex-direction: column; gap: 9px;">
+                <sc-for list="{{ parseLines }}" as="line" hint-placeholder-count="3">
+                  <div style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: {{ line.color }};">
+                    <span style="color: #4a4d55;">▸ </span>{{ line.text }}
+                  </div>
+                </sc-for>
+                <div
+                  style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: #b8e05a; animation: blink 1s step-end infinite;">
+                  ▮</div>
+              </div>
+              <div style="height: 3px; background: #1d1f25;">
+                <div style="height: 100%; background: #b8e05a; width: {{ parseWidth }}; transition: width .5s ease;">
+                </div>
+              </div>
+            </div>
+            <div style="text-align: center; font-size: 13px; color: #5a5d66; margin-top: 18px;">Reading structure,
+              rewriting bullets, ranking sections for a developer profile…</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ REVIEW ============ -->
+      <sc-if value="{{ isReview }}" hint-placeholder-val="{{ false }}">
+        <div style="flex: 1; padding: 40px 24px; display: flex; justify-content: center;">
+          <div style="width: 100%; max-width: 860px; animation: rise .4s ease both;">
+            <div
+              style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;">
+              <div>
+                <h2 style="font-size: 28px; font-weight: 700; margin: 0 0 6px;">Here's what we found</h2>
+                <p style="color: #a3a49e; margin: 0; font-size: 14.5px;">Everything is editable — click any field.</p>
+              </div>
+              <button onClick="{{ goResume }}"
+                style="background: #b8e05a; color: #10130a; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; padding: 12px 26px; border-radius: 10px; cursor: pointer;"
+                style-hover="background: #d2f078;">Generate PDF Resume →</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
+
+              <div
+                style="background: #101218; border: 1px solid #22252c; border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 14px;">
+                <div
+                  style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .1em; color: #b8e05a;">
+                  IDENTITY</div>
                 <div>
-                  <div style="font-size: 14.5px; font-weight: 600;">{{ tc.name }}</div>
-                  <div style="font-size: 12px; color: #8b8d94; margin-top: 2px;">{{ tc.desc }}</div>
+                  <label style="font-size: 11.5px; color: #8b8d94; display: block; margin-bottom: 5px;">Name</label>
+                  <input value="{{ pName }}" onChange="{{ onName }}"
+                    style="width: 100%; box-sizing: border-box; background: #0c0d10; border: 1px solid #24262d; border-radius: 8px; color: #e8e6e1; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 500; padding: 10px 13px; outline: none;">
                 </div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: {{ tc.checkColor }};">{{ tc.check }}</div>
+                <div>
+                  <label style="font-size: 11.5px; color: #8b8d94; display: block; margin-bottom: 5px;">Headline</label>
+                  <input value="{{ pHeadline }}" onChange="{{ onHeadline }}"
+                    style="width: 100%; box-sizing: border-box; background: #0c0d10; border: 1px solid #24262d; border-radius: 8px; color: #e8e6e1; font-family: 'Space Grotesk', sans-serif; font-size: 14px; padding: 10px 13px; outline: none;">
+                </div>
+                <button onClick="{{ punchHeadline }}"
+                  style="align-self: flex-start; background: none; border: 1px solid #3a3d33; color: #b8e05a; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 7px 12px; border-radius: 8px; cursor: pointer;"
+                  style-hover="background: #171a12;">✦ AI: make it punchier</button>
               </div>
-            </div>
-          </sc-for>
-        </div>
-        <div style="display: flex; gap: 28px; flex-wrap: wrap; margin-top: 28px; align-items: center;">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 13px; color: #8b8d94;">Motion</span>
-            <div style="display: flex; gap: 6px;">
-              <sc-for list="{{ motionOpts }}" as="mo" hint-placeholder-count="3">
-                <button onClick="{{ mo.pick }}" style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; padding: 7px 13px; border-radius: 999px; cursor: pointer; background: {{ mo.bg }}; color: {{ mo.color }}; border: 1px solid {{ mo.bd }};">{{ mo.label }}</button>
-              </sc-for>
+
+              <div style="background: #101218; border: 1px solid #22252c; border-radius: 14px; padding: 22px;">
+                <div
+                  style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .1em; color: #b8e05a; margin-bottom: 14px;">
+                  SKILLS · {{ skillCount }}</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                  <sc-for list="{{ skills }}" as="sk" hint-placeholder-count="6">
+                    <div onClick="{{ sk.remove }}" title="Click to remove"
+                      style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #c9c8c2; background: #171921; border: 1px solid #24262d; border-radius: 999px; padding: 6px 12px; cursor: pointer;"
+                      style-hover="border-color: #7a3535; color: #e0a0a0;">{{ sk.name }}</div>
+                  </sc-for>
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 14px;">
+                  <input value="{{ skillDraft }}" onChange="{{ onSkillDraft }}" placeholder="Add a skill…"
+                    style="flex: 1; background: #0c0d10; border: 1px solid #24262d; border-radius: 8px; color: #e8e6e1; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; padding: 8px 12px; outline: none;">
+                  <button onClick="{{ addSkill }}"
+                    style="background: #22252c; border: 1px solid #2e313a; color: #e8e6e1; border-radius: 8px; padding: 0 14px; cursor: pointer; font-size: 14px;"
+                    style-hover="background: #2b2f38;">+</button>
+                </div>
+              </div>
+
+              <div style="background: #101218; border: 1px solid #22252c; border-radius: 14px; padding: 22px;">
+                <div
+                  style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .1em; color: #b8e05a; margin-bottom: 14px;">
+                  EXPERIENCE</div>
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                  <sc-for list="{{ experience }}" as="ex" hint-placeholder-count="2">
+                    <div
+                      style="border: 1px solid #1d1f25; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 8px;">
+                      <input value="{{ ex.role }}" onChange="{{ ex.onRole }}"
+                        style="background: none; border: none; border-bottom: 1px dashed #2a2d34; color: #e8e6e1; font-family: 'Space Grotesk', sans-serif; font-size: 14.5px; font-weight: 500; padding: 2px 0 5px; outline: none;">
+                      <div style="display: flex; gap: 10px; align-items: center;">
+                        <input value="{{ ex.company }}" onChange="{{ ex.onCompany }}"
+                          style="flex: 1; background: none; border: none; color: #a3a49e; font-size: 13px; padding: 0; outline: none;">
+                        <span
+                          style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5a5d66; white-space: nowrap;">{{
+                          ex.dates }}</span>
+                      </div>
+                      <textarea value="{{ ex.desc }}" onChange="{{ ex.onDesc }}"
+                        style="background: none; border: none; color: #a3a49e; font-family: 'Space Grotesk', sans-serif; font-size: 13px; line-height: 1.5; padding: 0; outline: none; resize: none; height: 56px; margin-top: 4px;"></textarea>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="background: #101218; border: 1px solid #22252c; border-radius: 14px; padding: 22px;">
+                <div
+                  style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .1em; color: #b8e05a; margin-bottom: 14px;">
+                  PROJECTS · {{ projCount }}</div>
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                  <sc-for list="{{ projects }}" as="pr" hint-placeholder-count="3">
+                    <div
+                      style="border: 1px solid #1d1f25; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 7px;">
+                      <input value="{{ pr.name }}" onChange="{{ pr.onName }}"
+                        style="background: none; border: none; border-bottom: 1px dashed #2a2d34; color: #e8e6e1; font-family: 'Space Grotesk', sans-serif; font-size: 14.5px; font-weight: 500; padding: 2px 0 5px; outline: none;">
+                      <textarea value="{{ pr.desc }}" onChange="{{ pr.onDesc }}"
+                        style="background: none; border: none; color: #a3a49e; font-family: 'Space Grotesk', sans-serif; font-size: 13px; line-height: 1.5; padding: 0; outline: none; resize: none; height: 56px;"></textarea>
+                      <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #5a5d66;">{{
+                        pr.stack }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
             </div>
           </div>
-          <div style="font-size: 12px; color: #5a5d66;">Motion controls scroll reveals and hero animation on the generated site.</div>
         </div>
-      </div>
-    </div>
-  </sc-if>
+      </sc-if>
 
-  <!-- ============ PREVIEW ============ -->
-  <sc-if value="{{ isPreview }}" hint-placeholder-val="{{ false }}">
-    <div style="flex: 1; display: flex; flex-direction: column; padding: 24px; gap: 16px;">
-      <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-        <div style="font-size: 15px; font-weight: 600;">{{ chosenName }} <span style="color: #5a5d66; font-weight: 400;">· {{ pName }}'s site</span></div>
-        <div style="display: flex; gap: 6px; margin-left: auto;">
-          <button onClick="{{ setDesktop }}" style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; padding: 7px 13px; border-radius: 8px; cursor: pointer; background: {{ deskBg }}; color: {{ deskColor }}; border: 1px solid #2e313a;">desktop</button>
-          <button onClick="{{ setMobile }}" style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; padding: 7px 13px; border-radius: 8px; cursor: pointer; background: {{ mobBg }}; color: {{ mobColor }}; border: 1px solid #2e313a;">mobile</button>
-        </div>
-        <button onClick="{{ goStyle }}" style="background: none; border: 1px solid #2e313a; color: #c9c8c2; font-family: 'Space Grotesk', sans-serif; font-size: 13px; padding: 9px 16px; border-radius: 8px; cursor: pointer;" style-hover="background: #171921;">← Restyle</button>
-        <button onClick="{{ publish }}" style="background: #b8e05a; color: #10130a; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; padding: 10px 22px; border-radius: 8px; cursor: pointer;" style-hover="background: #d2f078;">Publish</button>
-      </div>
-
-      <div style="flex: 1; display: flex; justify-content: center; align-items: flex-start; overflow: auto; background: #08090b; border: 1px solid #1d1f25; border-radius: 16px; padding: 24px;">
-        <div style="width: {{ frameWidth }}; max-width: 100%; background: {{ th.bg }}; border-radius: 10px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.5); transition: width .35s ease;">
-          <div style="display: flex; align-items: center; gap: 6px; background: #16181d; padding: 9px 14px;">
-            <div style="width: 9px; height: 9px; border-radius: 50%; background: #3a3d44;"></div>
-            <div style="width: 9px; height: 9px; border-radius: 50%; background: #3a3d44;"></div>
-            <div style="width: 9px; height: 9px; border-radius: 50%; background: #3a3d44;"></div>
-            <div style="margin: 0 auto; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #6a6d75; background: #0c0d10; border-radius: 6px; padding: 3px 14px;">{{ siteUrl }}</div>
-          </div>
-
-          <!-- generated portfolio -->
-          <div style="background: {{ th.bg }}; color: {{ th.text }}; font-family: {{ th.font }}; padding: 0 0 16px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px {{ th.pad }};">
-              <span style="font-family: {{ th.monoFont }}; font-size: 14px; font-weight: 700; color: {{ th.text }}; letter-spacing: -0.02em;">{{ initials }}<span style="animation: blink 1s step-end infinite; color: {{ th.accent }};">_</span></span>
-              <div style="display: flex; gap: 24px; font-size: 13.5px; font-weight: 500;">
-                <span style="color: {{ th.sub }}; cursor: pointer;">Work</span>
-                <span style="color: {{ th.sub }}; cursor: pointer;">Contact</span>
+      <!-- ============ RESUME ============ -->
+      <sc-if value="{{ isResume }}" hint-placeholder-val="{{ false }}">
+        <div style="flex: 1; padding: 40px 24px; display: flex; flex-direction: column; align-items: center;">
+          <div style="width: 100%; max-width: 960px; animation: rise .4s ease both;">
+            <div
+              style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;">
+              <div>
+                <h2 style="font-size: 28px; font-weight: 700; margin: 0 0 6px;">Your Resume is Ready</h2>
+                <p style="color: #a3a49e; margin: 0; font-size: 14.5px;">Select a clean, ATS-friendly format for your
+                  PDF.</p>
               </div>
+              <button onClick="{{ goPayment }}"
+                style="background: #b8e05a; color: #10130a; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; padding: 12px 26px; border-radius: 10px; cursor: pointer;"
+                style-hover="background: #d2f078;">Download PDF (₹20) →</button>
             </div>
-            
-            <div class="{{ premiumHeroBg }}" style="padding: {{ heroPad }} {{ th.pad }} 48px; animation: {{ heroAnim }};">
-              <div style="display: inline-flex; align-items: center; font-family: {{ th.monoFont }}; font-size: 11.5px; letter-spacing: .12em; color: {{ th.accent }}; border: 1px solid {{ th.accentBd }}; border-radius: 999px; padding: 6px 14px; margin-bottom: 24px;">
-                <span class="status-dot" style="background: {{ th.accent }};"></span>{{ availLabel }}
-              </div>
-              <h1 class="{{ premiumTextFx }}" style="font-family: {{ th.headFont }}; font-size: {{ heroSize }}; font-weight: {{ th.headWeight }}; line-height: 1.05; letter-spacing: {{ th.headSpacing }}; text-transform: {{ th.headCase }}; text-wrap: balance; margin: 0;">
-                <span style="display: block;">{{ pName.split(' ')[0] }}</span>
-                <span style="display: block; color: {{ th.accent }};">{{ pName.split(' ').slice(1).join(' ') }}</span>
-              </h1>
-              <p style="font-size: 16.5px; line-height: 1.6; color: {{ th.sub }}; max-width: 480px; margin: 20px 0 0; text-wrap: pretty;">{{ pHeadline }}</p>
-            </div>
+            <div style="display: flex; gap: 32px; flex-wrap: wrap; justify-content: center;">
 
-            <div style="padding: 0 {{ th.pad }} 48px; animation: {{ heroAnim }}; animation-delay: 0.1s; animation-fill-mode: both;">
-              <div style="font-family: {{ th.monoFont }}; font-size: 11px; letter-spacing: .15em; color: {{ th.accent }}; margin-bottom: 20px; text-transform: uppercase;">The Stack</div>
-              <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                <sc-for list="{{ skillNames }}" as="s" hint-placeholder-count="6">
-                  <span style="font-family: {{ th.monoFont }}; font-size: 12.5px; font-weight: 500; color: {{ th.text }}; border: {{ th.chipBorder }}; background: {{ th.chipBg }}; border-radius: {{ th.chipRadius }}; padding: 7px 14px;">{{ s.name }}</span>
+              <!-- Format Selector -->
+              <div style="display: flex; flex-direction: column; gap: 12px; width: 220px;">
+                <sc-for list="{{ resumeStyles }}" as="rs" hint-placeholder-count="2">
+                  <div onClick="{{ rs.pick }}"
+                    style="background: #101218; border: 1.5px solid {{ rs.bd }}; border-radius: 10px; padding: 16px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;"
+                    style-hover="border-color: #b8e05a;">
+                    <span
+                      style="font-size: 14.5px; font-weight: 600; color: #e8e6e1; font-family: {{ rs.fontFamily }};">{{
+                      rs.name }}</span>
+                    <span
+                      style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: {{ rs.checkColor }};">{{
+                      rs.check }}</span>
+                  </div>
                 </sc-for>
               </div>
-            </div>
 
-            <div style="padding: 0 {{ th.pad }} 48px; animation: {{ heroAnim }}; animation-delay: 0.2s; animation-fill-mode: both;">
-              <div style="font-family: {{ th.monoFont }}; font-size: 11px; letter-spacing: .15em; color: {{ th.accent }}; margin-bottom: 20px; text-transform: uppercase;">Selected Work</div>
-              <div style="display: grid; grid-template-columns: {{ projGrid }}; gap: 16px;">
-                <sc-for list="{{ projects }}" as="pr" hint-placeholder-count="3">
-                  <div class="{{ premiumCardClass }}" style="border: {{ th.cardBorder }}; background: {{ th.cardBg }}; border-radius: {{ th.cardRadius }}; padding: 24px; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; backdrop-filter: {{ th.backdropFilter }};" style-hover="transform: translateY(-2px); {{ s.template === 'cinematic' ? 'box-shadow: 0 0 20px rgba(255,178,36,0.1)' : '' }}">
-                    <div style="font-family: {{ th.headFont }}; font-size: 18px; font-weight: 700; margin-bottom: 8px;">{{ pr.name }}</div>
-                    <div style="font-size: 13.5px; line-height: 1.6; color: {{ th.sub }};">{{ pr.desc }}</div>
-                    <div style="font-family: {{ th.monoFont }}; font-size: 11px; font-weight: 500; color: {{ th.accent }}; margin-top: 16px; padding-top: 16px; border-top: 1px dashed {{ th.divider }};">{{ pr.stack }}</div>
+              <!-- A4 Canvas Simulator -->
+              <div
+                style="width: 480px; height: 680px; background: #ffffff; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); padding: 48px; color: #111; font-family: {{ resumeFont }}; overflow: hidden;">
+                <h1 style="font-size: 28px; margin: 0 0 4px; color: #111;">{{ pName }}</h1>
+                <div
+                  style="font-size: 13px; color: #555; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #333;">
+                  {{ pHeadline }}</div>
+
+                <h2
+                  style="font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 12px; color: #111;">
+                  Skills</h2>
+                <div style="font-size: 13px; color: #333; margin-bottom: 24px; line-height: 1.6;">{{ cvSkills }}</div>
+
+                <h2
+                  style="font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 12px; color: #111;">
+                  Experience</h2>
+                <sc-for list="{{ experience }}" as="ex" hint-placeholder-count="2">
+                  <div style="margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 13.5px; font-weight: bold;">
+                      <span>{{ ex.role }}</span><span style="font-weight: normal; color: #555;">{{ ex.dates }}</span>
+                    </div>
+                    <div style="font-size: 13px; color: #444; font-style: italic; margin-top: 4px;">{{ ex.company }}
+                    </div>
+                    <div style="font-size: 12.5px; color: #333; margin-top: 4px; line-height: 1.5;">{{ ex.desc }}</div>
                   </div>
                 </sc-for>
               </div>
             </div>
+          </div>
+        </div>
+      </sc-if>
 
-            <div style="padding: 0 {{ th.pad }} 32px; animation: {{ heroAnim }}; animation-delay: 0.3s; animation-fill-mode: both;">
-              <div style="font-family: {{ th.monoFont }}; font-size: 11px; letter-spacing: .15em; color: {{ th.accent }}; margin-bottom: 20px; text-transform: uppercase;">Experience</div>
-              <sc-for list="{{ experience }}" as="ex" hint-placeholder-count="2">
-                <div style="display: flex; justify-content: space-between; gap: 16px; padding: 18px 0; border-bottom: 1px solid {{ th.divider }};">
-                  <div>
-                    <div style="font-family: {{ th.headFont }}; font-size: 16px; font-weight: 600;">{{ ex.role }}</div>
-                    <div style="font-size: 13.5px; color: {{ th.sub }}; margin-top: 4px;">{{ ex.company }}</div>
-                    <div style="font-size: 14px; line-height: 1.5; color: {{ th.sub }}; margin-top: 10px; max-width: 90%;">{{ ex.desc }}</div>
+      <!-- ============ MOCK PAYMENT ============ -->
+      <sc-if value="{{ isPayment }}" hint-placeholder-val="{{ false }}">
+        <div
+          style="flex: 1; display: flex; align-items: center; justify-content: center; background: rgba(5,6,8,0.85); position: fixed; inset: 0; z-index: 50;">
+          <div
+            style="background: #ffffff; border-radius: 8px; width: 380px; overflow: hidden; animation: staggerRise 0.2s ease both; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+            <div
+              style="background: #2b84eb; padding: 24px 20px; color: white; display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-weight: bold; font-size: 16px; margin-bottom: 4px;">FolioForge Software</div>
+                <div style="font-size: 13px; opacity: 0.8;">Resume PDF Export</div>
+              </div>
+              <div style="font-size: 20px; font-weight: bold;">₹ 20</div>
+            </div>
+            <div style="padding: 24px 20px;">
+              <div style="font-size: 14px; color: #555; margin-bottom: 16px;">Pay easily using UPI or Card</div>
+              <div
+                style="border: 1px solid #ddd; border-radius: 4px; padding: 12px; margin-bottom: 12px; cursor: pointer; border-left: 4px solid #2b84eb; display: flex; justify-content: space-between; align-items: center;"
+                style-hover="background: #f9f9f9;">
+                <div>
+                  <strong style="color: #333; font-size: 14px;">UPI / QR</strong><br>
+                  <span style="color: #777; font-size: 12px;">Google Pay, PhonePe, Paytm</span>
+                </div>
+                <div style="width: 16px; height: 16px; border-radius: 50%; border: 4px solid #2b84eb;"></div>
+              </div>
+              <div style="border: 1px solid #ddd; border-radius: 4px; padding: 12px; cursor: pointer;"
+                style-hover="background: #f9f9f9;">
+                <strong style="color: #333; font-size: 14px;">Cards</strong><br>
+                <span style="color: #777; font-size: 12px;">Visa, MasterCard, RuPay</span>
+              </div>
+              <button onClick="{{ confirmPayment }}"
+                style="width: 100%; background: #2b84eb; color: white; border: none; font-size: 15px; font-weight: bold; padding: 14px; border-radius: 4px; margin-top: 24px; cursor: pointer;"
+                style-hover="background: #1c72d6; transform: scale(0.98);">Pay ₹ 20</button>
+              <div style="text-align: center; margin-top: 16px;"><span onClick="{{ cancelPayment }}"
+                  style="color: #999; font-size: 12px; text-decoration: underline; cursor: pointer;">Cancel</span></div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ UPSELL ============ -->
+      <sc-if value="{{ isUpsell }}" hint-placeholder-val="{{ false }}">
+        <div
+          style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 24px; text-align: center; animation: rise 0.5s ease both;">
+          <div style="font-size: 54px; margin-bottom: 16px;">🎉</div>
+          <h1 style="font-size: 42px; font-weight: 700; margin: 0 0 16px; letter-spacing: -0.02em;">Payment Successful.
+          </h1>
+          <p style="font-size: 18px; color: #a3a49e; max-width: 600px; margin: 0 0 40px;">Your PDF Resume has been
+            generated and securely downloaded. <br><br><span style="color: #e8e6e1; font-weight: bold;">But why stop
+              there?</span> We can turn the exact data into an animated, responsive web portfolio right now.</p>
+          <button onClick="{{ goStyle }}"
+            style="background: #b8e05a; color: #10130a; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; padding: 16px 40px; border-radius: 12px; cursor: pointer; box-shadow: 0 0 30px rgba(184,224,90,0.3);"
+            style-hover="background: #d2f078; box-shadow: 0 0 40px rgba(184,224,90,0.5);">Generate Web Portfolio
+            →</button>
+          <div style="margin-top: 24px;"><span onClick="{{ goLanding }}"
+              style="color: #5a5d66; font-size: 13.5px; text-decoration: underline; cursor: pointer;"
+              style-hover="color: #8b8d94;">No thanks, I just wanted the PDF</span></div>
+        </div>
+      </sc-if>
+
+      <!-- ============ STYLE ============ -->
+      <sc-if value="{{ isStyle }}" hint-placeholder-val="{{ false }}">
+        <div style="flex: 1; padding: 40px 24px; display: flex; justify-content: center;">
+          <div style="width: 100%; max-width: 960px; animation: rise .4s ease both;">
+            <div
+              style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;">
+              <div>
+                <h2 style="font-size: 28px; font-weight: 700; margin: 0 0 6px;">Pick your personality</h2>
+                <p style="color: #a3a49e; margin: 0; font-size: 14.5px;">Same content, five very different sites. Switch
+                  anytime.</p>
+              </div>
+              <button onClick="{{ goPreview }}"
+                style="background: #b8e05a; color: #10130a; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; padding: 12px 26px; border-radius: 10px; cursor: pointer;"
+                style-hover="background: #d2f078;">Generate my site →</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+              <sc-for list="{{ templateCards }}" as="tc" hint-placeholder-count="5">
+                <div onClick="{{ tc.pick }}"
+                  style="border: 1.5px solid {{ tc.bd }}; border-radius: 14px; overflow: hidden; cursor: pointer; background: #101218; box-shadow: {{ tc.shadow }};"
+                  style-hover="border-color: #b8e05a;">
+                  <div
+                    style="height: 130px; background: {{ tc.pvBg }}; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px;">
+                    <div
+                      style="width: 46%; height: 13px; background: {{ tc.pvHead }}; border-radius: {{ tc.pvRadius }};">
+                    </div>
+                    <div
+                      style="width: 72%; height: 8px; background: {{ tc.pvText }}; border-radius: {{ tc.pvRadius }}; opacity: .55;">
+                    </div>
+                    <div
+                      style="width: 60%; height: 8px; background: {{ tc.pvText }}; border-radius: {{ tc.pvRadius }}; opacity: .35;">
+                    </div>
+                    <div style="display: flex; gap: 6px; margin-top: auto;">
+                      <div
+                        style="width: 52px; height: 18px; background: {{ tc.pvAccent }}; border-radius: {{ tc.pvRadius }};">
+                      </div>
+                      <div
+                        style="width: 34px; height: 18px; border: 1px solid {{ tc.pvText }}; opacity: .4; border-radius: {{ tc.pvRadius }};">
+                      </div>
+                    </div>
                   </div>
-                  <span style="font-family: {{ th.monoFont }}; font-size: 11.5px; color: {{ th.sub }}; white-space: nowrap;">{{ ex.dates }}</span>
+                  <div
+                    style="padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #1d1f25;">
+                    <div>
+                      <div style="font-size: 14.5px; font-weight: 600;">{{ tc.name }}</div>
+                      <div style="font-size: 12px; color: #8b8d94; margin-top: 2px;">{{ tc.desc }}</div>
+                    </div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: {{ tc.checkColor }};">
+                      {{ tc.check }}</div>
+                  </div>
                 </div>
               </sc-for>
             </div>
+            <div style="display: flex; gap: 28px; flex-wrap: wrap; margin-top: 28px; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 13px; color: #8b8d94;">Motion</span>
+                <div style="display: flex; gap: 6px;">
+                  <sc-for list="{{ motionOpts }}" as="mo" hint-placeholder-count="3">
+                    <button onClick="{{ mo.pick }}"
+                      style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; padding: 7px 13px; border-radius: 999px; cursor: pointer; background: {{ mo.bg }}; color: {{ mo.color }}; border: 1px solid {{ mo.bd }};">{{
+                      mo.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="font-size: 12px; color: #5a5d66;">Motion controls scroll reveals and hero animation on the
+                generated site.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
 
-            <div style="padding: 24px {{ th.pad }} 48px; text-align: center; animation: {{ heroAnim }}; animation-delay: 0.4s; animation-fill-mode: both;">
-              <div style="font-family: {{ th.headFont }}; font-size: 28px; font-weight: {{ th.headWeight }}; margin-bottom: 12px; letter-spacing: {{ th.headSpacing }};">Let's build something.</div>
-              <div style="font-size: 14.5px; color: {{ th.sub }}; margin-bottom: 24px;">I'm currently taking on new projects.</div>
-              <div style="display: inline-flex; align-items: center; justify-content: center; background: {{ th.accent }}; color: {{ th.accentText }}; font-size: 14.5px; font-weight: 600; padding: 13px 28px; border-radius: {{ th.chipRadius }}; cursor: pointer; transition: opacity 0.2s ease;" style-hover="opacity: 0.9;">
-                Get in touch
+      <!-- ============ PREVIEW ============ -->
+      <sc-if value="{{ isPreview }}" hint-placeholder-val="{{ false }}">
+        <div style="flex: 1; display: flex; flex-direction: column; padding: 24px; gap: 16px;">
+          <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <div style="font-size: 15px; font-weight: 600;">{{ chosenName }} <span
+                style="color: #5a5d66; font-weight: 400;">· {{ pName }}'s site</span></div>
+            <div style="display: flex; gap: 6px; margin-left: auto;">
+              <button onClick="{{ setDesktop }}"
+                style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; padding: 7px 13px; border-radius: 8px; cursor: pointer; background: {{ deskBg }}; color: {{ deskColor }}; border: 1px solid #2e313a;">desktop</button>
+              <button onClick="{{ setMobile }}"
+                style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; padding: 7px 13px; border-radius: 8px; cursor: pointer; background: {{ mobBg }}; color: {{ mobColor }}; border: 1px solid #2e313a;">mobile</button>
+            </div>
+            <button onClick="{{ goStyle }}"
+              style="background: none; border: 1px solid #2e313a; color: #c9c8c2; font-family: 'Space Grotesk', sans-serif; font-size: 13px; padding: 9px 16px; border-radius: 8px; cursor: pointer;"
+              style-hover="background: #171921;">← Restyle</button>
+            <button onClick="{{ publish }}"
+              style="background: #b8e05a; color: #10130a; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; padding: 10px 22px; border-radius: 8px; cursor: pointer;"
+              style-hover="background: #d2f078;">Publish</button>
+          </div>
+
+          <div
+            style="flex: 1; display: flex; justify-content: center; align-items: flex-start; overflow: auto; background: #08090b; border: 1px solid #1d1f25; border-radius: 16px; padding: 24px;">
+            <div
+              style="width: {{ frameWidth }}; max-width: 100%; background: {{ th.bg }}; border-radius: 10px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.5); transition: width .35s ease;">
+              <div style="display: flex; align-items: center; gap: 6px; background: #16181d; padding: 9px 14px;">
+                <div style="width: 9px; height: 9px; border-radius: 50%; background: #3a3d44;"></div>
+                <div style="width: 9px; height: 9px; border-radius: 50%; background: #3a3d44;"></div>
+                <div style="width: 9px; height: 9px; border-radius: 50%; background: #3a3d44;"></div>
+                <div
+                  style="margin: 0 auto; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #6a6d75; background: #0c0d10; border-radius: 6px; padding: 3px 14px;">
+                  {{ siteUrl }}</div>
+              </div>
+
+              <!-- generated portfolio -->
+              <div
+                style="background: {{ th.bg }}; color: {{ th.text }}; font-family: {{ th.font }}; padding: 0 0 16px;">
+                <div
+                  style="display: flex; align-items: center; justify-content: space-between; padding: 20px {{ th.pad }};">
+                  <span
+                    style="font-family: {{ th.monoFont }}; font-size: 14px; font-weight: 700; color: {{ th.text }}; letter-spacing: -0.02em;">{{
+                    initials }}<span
+                      style="animation: blink 1s step-end infinite; color: {{ th.accent }};">_</span></span>
+                  <div style="display: flex; gap: 24px; font-size: 13.5px; font-weight: 500;">
+                    <span style="color: {{ th.sub }}; cursor: pointer;">Work</span>
+                    <span style="color: {{ th.sub }}; cursor: pointer;">Contact</span>
+                  </div>
+                </div>
+
+                <div class="{{ premiumHeroBg }}"
+                  style="padding: {{ heroPad }} {{ th.pad }} 48px; animation: {{ heroAnim }};">
+                  <div
+                    style="display: inline-flex; align-items: center; font-family: {{ th.monoFont }}; font-size: 11.5px; letter-spacing: .12em; color: {{ th.accent }}; border: 1px solid {{ th.accentBd }}; border-radius: 999px; padding: 6px 14px; margin-bottom: 24px;">
+                    <span class="status-dot" style="background: {{ th.accent }};"></span>{{ availLabel }}
+                  </div>
+                  <h1 class="{{ premiumTextFx }}"
+                    style="font-family: {{ th.headFont }}; font-size: {{ heroSize }}; font-weight: {{ th.headWeight }}; line-height: 1.05; letter-spacing: {{ th.headSpacing }}; text-transform: {{ th.headCase }}; text-wrap: balance; margin: 0;">
+                    <span style="display: block;">{{ pName.split(' ')[0] }}</span>
+                    <span style="display: block; color: {{ th.accent }};">{{ pName.split(' ').slice(1).join(' ')
+                      }}</span>
+                  </h1>
+                  <p
+                    style="font-size: 16.5px; line-height: 1.6; color: {{ th.sub }}; max-width: 480px; margin: 20px 0 0; text-wrap: pretty;">
+                    {{ pHeadline }}</p>
+                </div>
+
+                <div
+                  style="padding: 0 {{ th.pad }} 48px; animation: {{ heroAnim }}; animation-delay: 0.1s; animation-fill-mode: both;">
+                  <div
+                    style="font-family: {{ th.monoFont }}; font-size: 11px; letter-spacing: .15em; color: {{ th.accent }}; margin-bottom: 20px; text-transform: uppercase;">
+                    The Stack</div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <sc-for list="{{ skillNames }}" as="s" hint-placeholder-count="6">
+                      <span
+                        style="font-family: {{ th.monoFont }}; font-size: 12.5px; font-weight: 500; color: {{ th.text }}; border: {{ th.chipBorder }}; background: {{ th.chipBg }}; border-radius: {{ th.chipRadius }}; padding: 7px 14px;">{{
+                        s.name }}</span>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div
+                  style="padding: 0 {{ th.pad }} 48px; animation: {{ heroAnim }}; animation-delay: 0.2s; animation-fill-mode: both;">
+                  <div
+                    style="font-family: {{ th.monoFont }}; font-size: 11px; letter-spacing: .15em; color: {{ th.accent }}; margin-bottom: 20px; text-transform: uppercase;">
+                    Selected Work</div>
+                  <div style="display: grid; grid-template-columns: {{ projGrid }}; gap: 16px;">
+                    <sc-for list="{{ projects }}" as="pr" hint-placeholder-count="3">
+                      <div class="{{ premiumCardClass }}"
+                        style="border: {{ th.cardBorder }}; background: {{ th.cardBg }}; border-radius: {{ th.cardRadius }}; padding: 24px; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; backdrop-filter: {{ th.backdropFilter }};"
+                        style-hover="transform: translateY(-2px); {{ s.template === 'cinematic' ? 'box-shadow: 0 0 20px rgba(255,178,36,0.1)' : '' }}">
+                        <div
+                          style="font-family: {{ th.headFont }}; font-size: 18px; font-weight: 700; margin-bottom: 8px;">
+                          {{ pr.name }}</div>
+                        <div style="font-size: 13.5px; line-height: 1.6; color: {{ th.sub }};">{{ pr.desc }}</div>
+                        <div
+                          style="font-family: {{ th.monoFont }}; font-size: 11px; font-weight: 500; color: {{ th.accent }}; margin-top: 16px; padding-top: 16px; border-top: 1px dashed {{ th.divider }};">
+                          {{ pr.stack }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div
+                  style="padding: 0 {{ th.pad }} 32px; animation: {{ heroAnim }}; animation-delay: 0.3s; animation-fill-mode: both;">
+                  <div
+                    style="font-family: {{ th.monoFont }}; font-size: 11px; letter-spacing: .15em; color: {{ th.accent }}; margin-bottom: 20px; text-transform: uppercase;">
+                    Experience</div>
+                  <sc-for list="{{ experience }}" as="ex" hint-placeholder-count="2">
+                    <div
+                      style="display: flex; justify-content: space-between; gap: 16px; padding: 18px 0; border-bottom: 1px solid {{ th.divider }};">
+                      <div>
+                        <div style="font-family: {{ th.headFont }}; font-size: 16px; font-weight: 600;">{{ ex.role }}
+                        </div>
+                        <div style="font-size: 13.5px; color: {{ th.sub }}; margin-top: 4px;">{{ ex.company }}</div>
+                        <div
+                          style="font-size: 14px; line-height: 1.5; color: {{ th.sub }}; margin-top: 10px; max-width: 90%;">
+                          {{ ex.desc }}</div>
+                      </div>
+                      <span
+                        style="font-family: {{ th.monoFont }}; font-size: 11.5px; color: {{ th.sub }}; white-space: nowrap;">{{
+                        ex.dates }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div
+                  style="padding: 24px {{ th.pad }} 48px; text-align: center; animation: {{ heroAnim }}; animation-delay: 0.4s; animation-fill-mode: both;">
+                  <div
+                    style="font-family: {{ th.headFont }}; font-size: 28px; font-weight: {{ th.headWeight }}; margin-bottom: 12px; letter-spacing: {{ th.headSpacing }};">
+                    Let's build something.</div>
+                  <div style="font-size: 14.5px; color: {{ th.sub }}; margin-bottom: 24px;">I'm currently taking on new
+                    projects.</div>
+                  <div
+                    style="display: inline-flex; align-items: center; justify-content: center; background: {{ th.accent }}; color: {{ th.accentText }}; font-size: 14.5px; font-weight: 600; padding: 13px 28px; border-radius: {{ th.chipRadius }}; cursor: pointer; transition: opacity 0.2s ease;"
+                    style-hover="opacity: 0.9;">
+                    Get in touch
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </sc-if>
+      </sc-if>
 
-  <!-- publish modal -->
-  <sc-if value="{{ published }}" hint-placeholder-val="{{ false }}">
-    <div onClick="{{ closePublish }}" style="position: fixed; inset: 0; background: rgba(5,6,8,.7); display: flex; align-items: center; justify-content: center; z-index: 50;">
-      <div style="background: #14161c; border: 1px solid #2a2d34; border-radius: 16px; padding: 36px; max-width: 420px; text-align: center; animation: rise .3s ease both;">
-        <div style="font-size: 34px; margin-bottom: 12px;">🎉</div>
-        <div style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">Your site is ready</div>
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #b8e05a; margin-bottom: 14px;">{{ siteUrl }}</div>
-        <div style="font-size: 13.5px; color: #a3a49e; line-height: 1.55;">In the real product this deploys instantly. Hosting, custom domains, and export options — to be decided.</div>
-        <button onClick="{{ closePublish }}" style="margin-top: 20px; background: #b8e05a; color: #10130a; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; padding: 11px 26px; border-radius: 10px; cursor: pointer;">Done</button>
-      </div>
+      <!-- publish modal -->
+      <sc-if value="{{ published }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ closePublish }}"
+          style="position: fixed; inset: 0; background: rgba(5,6,8,.7); display: flex; align-items: center; justify-content: center; z-index: 50;">
+          <div
+            style="background: #14161c; border: 1px solid #2a2d34; border-radius: 16px; padding: 36px; max-width: 420px; text-align: center; animation: rise .3s ease both;">
+            <div style="font-size: 34px; margin-bottom: 12px;">🎉</div>
+            <div style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">Your site is ready</div>
+            <div
+              style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #b8e05a; margin-bottom: 14px;">{{
+              siteUrl }}</div>
+            <div style="font-size: 13.5px; color: #a3a49e; line-height: 1.55;">In the real product this deploys
+              instantly. Hosting, custom domains, and export options — to be decided.</div>
+            <button onClick="{{ closePublish }}"
+              style="margin-top: 20px; background: #b8e05a; color: #10130a; border: none; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; padding: 11px 26px; border-radius: 10px; cursor: pointer;">Done</button>
+          </div>
+        </div>
+      </sc-if>
     </div>
-  </sc-if>
-</div>
-</x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;startStep&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: null, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;landing&quot;, &quot;intake&quot;, &quot;review&quot;, &quot;resume&quot;, &quot;payment&quot;, &quot;upsell&quot;, &quot;style&quot;, &quot;preview&quot;], &quot;section&quot;: &quot;Demo&quot;}}">
+  </x-dc>
+  <script type="text/x-dc" data-dc-script
+    data-props="{&quot;startStep&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: null, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;landing&quot;, &quot;intake&quot;, &quot;review&quot;, &quot;resume&quot;, &quot;payment&quot;, &quot;upsell&quot;, &quot;style&quot;, &quot;preview&quot;], &quot;section&quot;: &quot;Demo&quot;}}">
 class Component extends DCLogic {
   state = {
     step: 'landing', intakeTab: 'upload', uploaded: false, resumeFile: null, pasteText: '', linkedinUrl: '',
@@ -524,7 +837,7 @@ class Component extends DCLogic {
         };
     }
 
-    fetch('http://localhost:8000/api/parse/', fetchOptions)
+    fetch('https://your-new-railway-link-here.up.railway.app/api/parse/', fetchOptions)
     .then(async res => {
         if (!res.ok) {
             const err = await res.json().catch(() => ({error: "Server Error"}));
@@ -649,7 +962,7 @@ class Component extends DCLogic {
       goResume: () => this.setStep('resume'),
       goPayment: () => {
         // Fetch real Razorpay order ID before showing checkout
-        fetch('http://localhost:8000/api/create-order/', { method: 'POST' })
+        fetch('https://your-new-railway-link-here.up.railway.app/api/create-order/', { method: 'POST' })
         .then(res => res.json())
         .then(data => {
             console.log("Razorpay Order Created: ", data);
@@ -665,7 +978,7 @@ class Component extends DCLogic {
       cancelPayment: () => this.setStep('resume'),
       confirmPayment: () => {
         // Contact backend to generate PDF from parsed profile
-        fetch('http://localhost:8000/api/generate-pdf/', {
+        fetch('https://your-new-railway-link-here.up.railway.app/api/generate-pdf/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ profile: this.state.profile })
@@ -739,4 +1052,5 @@ class Component extends DCLogic {
 }
 </script>
 </body>
+
 </html>
