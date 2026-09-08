@@ -837,7 +837,7 @@ class Component extends DCLogic {
         };
     }
 
-    fetch('https://your-new-railway-link-here.up.railway.app/api/parse/', fetchOptions)
+    fetch('https://folioforge-live-production.up.railway.app/api/parse/', fetchOptions)
     .then(async res => {
         if (!res.ok) {
             const err = await res.json().catch(() => ({error: "Server Error"}));
@@ -962,7 +962,7 @@ class Component extends DCLogic {
       goResume: () => this.setStep('resume'),
       goPayment: () => {
         // Fetch real Razorpay order ID before showing checkout
-        fetch('https://your-new-railway-link-here.up.railway.app/api/create-order/', { method: 'POST' })
+        fetch('https://folioforge-live-production.up.railway.app/api/create-order/', { method: 'POST' })
         .then(res => res.json())
         .then(data => {
             console.log("Razorpay Order Created: ", data);
@@ -978,7 +978,7 @@ class Component extends DCLogic {
       cancelPayment: () => this.setStep('resume'),
       confirmPayment: () => {
         // Contact backend to generate PDF from parsed profile
-        fetch('https://your-new-railway-link-here.up.railway.app/api/generate-pdf/', {
+        fetch('https://folioforge-live-production.up.railway.app/api/generate-pdf/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ profile: this.state.profile })
