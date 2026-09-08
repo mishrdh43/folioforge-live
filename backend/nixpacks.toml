@@ -5,4 +5,4 @@ nixPkgs = ["python312", "cairo", "pango", "gdk-pixbuf", "shared-mime-info", "fon
 cmds = ["pip install -r requirements.txt"]
 
 [start]
-cmd = "gunicorn folioforge_api.wsgi:application --bind [::]:${PORT:-8080}"
+cmd = "gunicorn folioforge_api.wsgi:application --bind 0.0.0.0:8000 --timeout 120"
