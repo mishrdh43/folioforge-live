@@ -17,7 +17,8 @@ from dotenv import load_dotenv
 import pypdf
 
 env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env')
-load_dotenv(dotenv_path=env_path, override=True) # Load variables from .env
+if os.path.exists(env_path):
+    load_dotenv(dotenv_path=env_path)  # Only load .env locally; Railway injects vars directly
 
 class ParseResumeView(APIView):
     def post(self, request):
