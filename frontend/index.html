@@ -784,18 +784,11 @@ class Component extends DCLogic {
     chatDraft: '', parseLines: [], parsePct: 0, skillDraft: '', device: 'desktop', motion: 'medium', published: false,
     template: 'cinematic', resumeTemplate: 'classic',
     profile: {
-      name: 'Aarav Sharma',
-      headline: 'Backend developer — Python, APIs, and real-time systems. Final-year MCA, shipping since second semester.',
-      skills: ['Python', 'Django', 'FastAPI', 'PostgreSQL', 'Redis', 'Docker', 'REST APIs', 'Git'],
-      experience: [
-        { role: 'Backend Developer Intern', company: 'Nimbus Labs', dates: 'Jan 2026 — present' },
-        { role: 'Freelance Developer', company: 'Self-employed', dates: '2024 — 2025' },
-      ],
-      projects: [
-        { name: 'Order-Flow API', desc: 'A FastAPI service handling 2k req/s with async workers, typed contracts, and zero-downtime deploys.', stack: 'FastAPI · Redis · Docker' },
-        { name: 'Campus Marketplace', desc: 'A Django marketplace for students — auth, payments, and a moderation queue, live with 1,200 users.', stack: 'Django · PostgreSQL · Razorpay' },
-        { name: 'Log Sentinel', desc: 'A CLI that tails production logs, clusters anomalies, and pings Slack before users notice.', stack: 'Python · Celery · Slack API' },
-      ],
+      name: '',
+      headline: '',
+      skills: [],
+      experience: [],
+      projects: [],
     },
   };
   templates = {
@@ -854,8 +847,9 @@ class Component extends DCLogic {
     })
     .catch(err => {
       console.error(err);
-      this.setState({ parseLines: ['connection failed: ' + err.message, 'falling back to local profile...'], parsePct: 100 });
-      setTimeout(() => this.setState({ step: 'review' }), 1200);
+      this.setState({ parseLines: ['connection failed: ' + err.message, 'ERROR: No fallback available, please try again.'], parsePct: 0 });
+      alert("Application Error: " + err.message);
+      // Removed the setTimeout fallback to 'review' step so it fails fast.
     });
   }
   setProfile(fn) { this.setState(s => ({ profile: fn({ ...s.profile }) })); }
@@ -972,7 +966,8 @@ class Component extends DCLogic {
         })
         .catch(err => {
             console.error(err);
-            this.setStep('payment'); // fallback to mock UI
+            alert("Error creating order: " + err.message);
+            throw err;
         });
       },
       cancelPayment: () => this.setStep('resume'),
@@ -997,7 +992,8 @@ class Component extends DCLogic {
         })
         .catch(err => {
           console.error(err);
-          this.setStep('upsell');
+          alert("Error generating PDF: " + err.message);
+          throw err;
         });
       },
       resumeStyles: [

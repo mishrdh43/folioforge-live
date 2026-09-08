@@ -57,50 +57,44 @@ class ParseResumeView(APIView):
             f"Resume Text:\n{text_content}"
         )
 
-        try:
-            if os.getenv("GEMINI_API_KEY"):
-                import requests
-                api_key = os.getenv("GEMINI_API_KEY")
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={api_key}"
-                data = {
-                    "contents": [{"parts": [{"text": prompt}]}],
-                    "generationConfig": {"temperature": 0.1}
-                }
-                resp = requests.post(url, json=data)
-                if resp.status_code != 200:
-                    raise Exception(f"Gemini API returned {resp.status_code}: {resp.text}")
-                resp_json = resp.json()
-                raw_json = resp_json['candidates'][0]['content']['parts'][0]['text']
-                
-            elif os.getenv("OPENAI_API_KEY"):
-                from openai import OpenAI
-                client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-                completion = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[{"role": "user", "content": prompt}]
-                )
-                raw_json = completion.choices[0].message.content
-                
-            else:
-                return Response({"error": "No LLM API Key configured in backend/.env"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-            # Clean markdown if LLM returns it
-            if raw_json.startswith("```json"):
-                raw_json = raw_json[7:-3]
-            elif raw_json.startswith("```"):
-                raw_json = raw_json[3:-3]
-                
-            parsed_data = json.loads(raw_json.strip())
-            return Response(parsed_data, status=status.HTTP_200_OK)
+        if os.getenv("GEMINI_API_KEY"):
+            import requests
+            api_key = os.getenv("GEMINI_API_KEY")
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={api_key}"
+            data = {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {"temperature": 0.1}
+            }
+            resp = requests.post(url, json=data)
+            if resp.status_code != 200:
+                raise Exception(f"Gemini API returned {resp.status_code}: {resp.text}")
+            resp_json = resp.json()
+            raw_json = resp_json['candidates'][0]['content']['parts'][0]['text']
             
-        except json.JSONDecodeError:
-            return Response({"error": "LLM did not return valid JSON.", "raw": raw_json}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        except Exception as e:
-            return Response({"error": f"LLM error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        elif os.getenv("OPENAI_API_KEY"):
+            from openai import OpenAI
+            client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+            completion = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}]
+            )
+            raw_json = completion.choices[0].message.content
+            
+        else:
+            raise ValueError("No LLM API Key configured in backend/.env")
+
+        # Clean markdown if LLM returns it
+        if raw_json.startswith("```json"):
+            raw_json = raw_json[7:-3]
+        elif raw_json.startswith("```"):
+            raw_json = raw_json[3:-3]
+            
+        parsed_data = json.loads(raw_json.strip())
+        return Response(parsed_data, status=status.HTTP_200_OK)
 
 class GeneratePDFView(APIView):
     def post(self, request):
-        profile = request.data.get('profile', {})
+        profile = request.data['profile']
         
         # Simple HTML template for the PDF
         html_string = f"""
@@ -120,14 +114,14 @@ class GeneratePDFView(APIView):
             </style>
         </head>
         <body>
-            <h1>{profile.get('name', 'Name')}</h1>
-            <div class="headline">{profile.get('headline', '')}</div>
+            <h1>{profile['name']}</h1>
+            <div class="headline">{profile['headline']}</div>
             
             <h2>Skills</h2>
-            <div class="skills">{ ' • '.join(profile.get('skills', [])) }</div>
+            <div class="skills">{ ' • '.join(profile['skills']) }</div>
             
             <h2>Experience</h2>
-            {"".join([f'<div class="exp-item"><div class="exp-header"><span>{ex.get("role", "")}</span><span class="exp-dates">{ex.get("dates", "")}</span></div><div class="exp-company">{ex.get("company", "")}</div><div class="exp-desc" style="font-size: 13px; color: #333; margin-top: 4px;">{ex.get("desc", "")}</div></div>' for ex in profile.get('experience', [])])}
+            {"".join([f'<div class="exp-item"><div class="exp-header"><span>{ex["role"]}</span><span class="exp-dates">{ex["dates"]}</span></div><div class="exp-company">{ex["company"]}</div><div class="exp-desc" style="font-size: 13px; color: #333; margin-top: 4px;">{ex["desc"]}</div></div>' for ex in profile['experience']])}
         </body>
         </html>
         """
