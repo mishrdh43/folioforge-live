@@ -65,7 +65,7 @@ class ParseResumeView(APIView):
                 "contents": [{"parts": [{"text": prompt}]}],
                 "generationConfig": {"temperature": 0.1}
             }
-            resp = requests.post(url, json=data)
+            resp = requests.post(url, json=data, timeout=20)
             if resp.status_code != 200:
                 raise Exception(f"Gemini API returned {resp.status_code}: {resp.text}")
             resp_json = resp.json()
